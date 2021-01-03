@@ -1,9 +1,13 @@
 import javax.json.Json;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Peer {
     //    private String username;
+    ArrayList<PeerThread> peerThreads = new ArrayList<>();
+    boolean listenMode = false;
+
     public static void main(String[] args) throws Exception {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Enter username:");
@@ -16,9 +20,11 @@ public class Peer {
     }
 
     public void updatePeerListen(BufferedReader bufferedReader, String username, ServerThread serverThread) throws Exception {
+        String str = "";
         while (true) {
             System.out.println("Enter information of peers to communicate with (write 's' to skip and 'c' to continue)");
-            if (bufferedReader.readLine().equals("c")) {
+            str = bufferedReader.readLine();
+            if (str.equals("c")) {
                 System.out.println("Enter ip address:");
                 String ipAddress = bufferedReader.readLine();
                 System.out.println("Enter port:");
@@ -26,12 +32,15 @@ public class Peer {
                 Socket socket = null;
                 try {
                     socket = new Socket(ipAddress, Integer.parseInt(portNr));
-                    new PeerThread(socket).start();
+                    PeerThread peerThread = new PeerThread(socket);
+                    peerThreads.add(peerThread);
+                    peerThread.start();
+//                    new PeerThread(socket).start();
                 } catch (Exception e) {
                     if (socket != null) socket.close();
                     else System.out.println("Invalid input");
                 }
-            } else if (bufferedReader.readLine().equals("s")) {
+            } else if (str.equals("s")) {
                 break;
             }
         }
