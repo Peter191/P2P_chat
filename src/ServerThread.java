@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class ServerThread extends Thread {
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
     private ArrayList<ServerThreadThread> serverThreadThreads = new ArrayList<>();
 
     public ServerThread(String portNr) throws IOException {

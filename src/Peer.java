@@ -42,7 +42,7 @@ public class Peer {
             if (str.equals(StringCollection.COMMANDCONTINUE.getText())) {
                 System.out.println(StringCollection.MESSAGEENTERIPADDRESS.getText());
                 String ipAddress = bufferedReader.readLine();
-                System.out.println(StringCollection.MESSAGEENTERPORT.getText());
+                System.out.println(StringCollection.MESSAGEENTERPORTOFPEER.getText());
                 String portNr = bufferedReader.readLine();
                 Socket socket = null;
                 try {
@@ -54,7 +54,7 @@ public class Peer {
                     if (socket != null) socket.close();
                     else System.out.println(StringCollection.ERRORINVALIDINPUT.getText());
                 }
-            } else if (str.equals(StringCollection.COMMANDSTOP.getText())) {
+            } else if (str.equals(StringCollection.COMMANDSKIP.getText())) {
                 break;
             }
         }

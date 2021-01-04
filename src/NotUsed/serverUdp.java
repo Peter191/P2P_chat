@@ -1,4 +1,4 @@
-// server.java
+package NotUsed;// server.java
 
 import java.net.*;
 import java.io.*;
@@ -6,18 +6,18 @@ import java.io.*;
 public class serverUdp {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int rcv_port = Integer.parseInt(args[0]);
 
         while (true) {
             try {
                 //server datagram socket and packet
                 DatagramSocket server = new DatagramSocket(rcv_port);
-                DatagramPacket packet = null;
+                DatagramPacket packet;
                 //input and output streams
                 byte[] buffer = new byte[256];
-                String outMessage = null;
-                String inMessage = null;
+                String outMessage;
+                String inMessage;
 
 //	    while (!inMessage.equals("exit")){
 
@@ -31,7 +31,7 @@ public class serverUdp {
                 //sending message
                 InetAddress address = packet.getAddress();
                 int rep_port = packet.getPort();
-                outMessage = new String(inMessage.toUpperCase());
+                outMessage = inMessage.toUpperCase();
                 System.out.println("[Replied message] -> " + outMessage);
                 buffer = outMessage.getBytes();
                 packet = new DatagramPacket(buffer, buffer.length, address, rep_port);

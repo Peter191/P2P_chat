@@ -1,4 +1,4 @@
-// client.java
+package NotUsed;// client.java
 
 import java.net.*;
 import java.io.*;
@@ -15,11 +15,11 @@ public class clientUdp {
         try {
             //client datagram socket and packet
             DatagramSocket client = new DatagramSocket();
-            DatagramPacket packet = null;
+            DatagramPacket packet;
 
             //input and output streams
-            byte[] buffer = new byte[256];
-            String outMessage = "";
+            byte[] buffer;
+            String outMessage;
             String inMessage = "";
 
             while (!inMessage.equals("EXIT")) {
