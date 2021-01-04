@@ -6,12 +6,14 @@ import javax.json.*;
 
 public class PeerThread extends Thread {
     BufferedReader bufferedReader;
+    Peer peer;
     boolean listenMode = false;
 
     //    String username,ip_address;
 //    int port;
-    public PeerThread(Socket socket) throws IOException {
+    public PeerThread(Socket socket, Peer peer) throws IOException {
         bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.peer = peer;
     }
 
     public void run() {
@@ -19,12 +21,10 @@ public class PeerThread extends Thread {
         while (flag) {
             try {
                 JsonObject jsonObject = Json.createReader(bufferedReader).readObject();
-                if (jsonObject.containsKey("username"))
-                    System.out.println("[" + jsonObject.getString("username") + "]: " + jsonObject.getString(("message")));
-                if (jsonObject.getString(("message")).equals("stop")&&!listenMode)
-                    listenMode = true;
-                else if (jsonObject.getString(("message")).equals("stop")&&listenMode)
-                    listenMode = false;
+                if (jsonObject.containsKey(StringCollection.FIELDUSERNAME.getText()))
+                    System.out.println("[" + jsonObject.getString(StringCollection.FIELDUSERNAME.getText()) + "]: " + jsonObject.getString((StringCollection.FIELDMESSAGE.getText())));
+                if (jsonObject.getString((StringCollection.FIELDMESSAGE.getText())).equals(StringCollection.COMMANDSTOP.getText()))
+                    changeListenMode();
             } catch (Exception e) {
                 flag = false;
                 interrupt();
@@ -38,5 +38,23 @@ public class PeerThread extends Thread {
 
     public void setListenMode(boolean listenMode) {
         this.listenMode = listenMode;
+    }
+
+    public Peer getPeer() {
+        return peer;
+    }
+
+    public void setPeer(Peer peer) {
+        this.peer = peer;
+    }
+
+    private void changeListenMode() {
+        if (isListenMode() && getPeer().isListenMode()) {
+            getPeer().setListenMode(false);
+            setListenMode(false);
+        } else if (!isListenMode() && !getPeer().isListenMode()) {
+            getPeer().setListenMode(true);
+            setListenMode(true);
+        }
     }
 }

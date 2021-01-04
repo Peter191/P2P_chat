@@ -12,11 +12,23 @@ public enum StringCollection {
     MESSAGEENTERPEERINFORMATION("Enter information of peers to communicate with (write 's' to skip and 'c' to continue)"),
     MESSAGEENTERIPADDRESS("Enter ip address:"),
     MESSAGEYOUCANCOMMUNICATE("you can communicate 'e' for exit, 'c' for change and 'stop' to make others listen"),
-    ERRORINVALIDINPUT("Invalid input");
+    MESSAGELISTEMODEACTIVATED("Listen mode activated by user:"),
+    MESSAGELISTEMODEDEACTIVATED("Listen mode deactivated by user:"),
+    ERRORINVALIDINPUT("Invalid input"),
+    FIELDUSERNAME("username"),
+    FIELDMESSAGE("message"),
+    FIELDSYSTEM("SYSTEM"),
+    COMMANDSTOP("stop"),
+    COMMANDFAST("f"),
+    COMMANDCONTINUE("c"),
+    COMMANDSKIP("s");
 
-    public final String label;
+    private final String label;
 
     StringCollection(String label) {
         this.label = label;
+    }
+    public final String getText(){
+        return label;
     }
 }
