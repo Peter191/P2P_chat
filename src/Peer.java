@@ -9,25 +9,39 @@ public class Peer {
     boolean listenMode = false;
 
     public static void main(String[] args) throws Exception {
+        boolean fast = false;
+        if (args.length != 0 && args[0].equals("f")) {
+            fast = true;
+        }
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Enter username:");
-        String username = bufferedReader.readLine();
-        System.out.println("Enter port:");
-        String port = bufferedReader.readLine();
+        System.out.println(StringCollection.MESSAGEENTERUSERNAME.label);
+        String username;
+        if (!fast) {
+            username = bufferedReader.readLine();
+        } else {
+            username = args[1];
+        }
+        System.out.println(StringCollection.MESSAGEENTERPORT.label);
+        String port;
+        if (!fast) {
+            port = bufferedReader.readLine();
+        } else {
+            port = args[2];
+        }
         ServerThread serverThread = new ServerThread(port);
         serverThread.start();
         new Peer().updatePeerListen(bufferedReader, username, serverThread);
     }
 
     public void updatePeerListen(BufferedReader bufferedReader, String username, ServerThread serverThread) throws Exception {
-        String str = "";
+        String str;
         while (true) {
-            System.out.println("Enter information of peers to communicate with (write 's' to skip and 'c' to continue)");
+            System.out.println(StringCollection.MESSAGEENTERPEERINFORMATION.label);
             str = bufferedReader.readLine();
             if (str.equals("c")) {
-                System.out.println("Enter ip address:");
+                System.out.println(StringCollection.MESSAGEENTERIPADDRESS.label);
                 String ipAddress = bufferedReader.readLine();
-                System.out.println("Enter port:");
+                System.out.println(StringCollection.MESSAGEENTERPORT.label);
                 String portNr = bufferedReader.readLine();
                 Socket socket = null;
                 try {
@@ -38,7 +52,7 @@ public class Peer {
 //                    new PeerThread(socket).start();
                 } catch (Exception e) {
                     if (socket != null) socket.close();
-                    else System.out.println("Invalid input");
+                    else System.out.println(StringCollection.ERRORINVALIDINPUT.label);
                 }
             } else if (str.equals("s")) {
                 break;
@@ -47,9 +61,9 @@ public class Peer {
         communicate(bufferedReader, username, serverThread);
     }
 
-    private void communicate(BufferedReader bufferedReader, String username, ServerThread serverThread) throws Exception {
+    private void communicate(BufferedReader bufferedReader, String username, ServerThread serverThread) {
         try {
-            System.out.println("you can communicate 'e' for exit, 'c' for change and 'stop' to make others listen");
+            System.out.println(StringCollection.MESSAGEYOUCANCOMMUNICATE.label);
             label:
             while (true) {
                 String message = bufferedReader.readLine();
