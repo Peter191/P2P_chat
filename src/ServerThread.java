@@ -7,7 +7,7 @@ public class ServerThread extends Thread {
     private DatagramPacket packet;
     private final ArrayList<InetAddress> inetAddresses = new ArrayList<>();
     private final ArrayList<Integer> rep_ports = new ArrayList<>();
-    byte[] buffer = new byte[576 ];
+    byte[] buffer = new byte[576];
     String inMessage;
     private Peer peer;
     boolean listenMode = false;
@@ -23,7 +23,7 @@ public class ServerThread extends Thread {
             while (true) {
                 datagramSocket.receive(packet);
                 inMessage = new String(packet.getData(), 0, packet.getLength());
-                if (packet != null) {
+                if (packet.getLength() != 0) {
                     inMessage = new String(packet.getData(), 0, packet.getLength());
                     String[] split = inMessage.split(":");
                     String message = split[split.length - 1];
@@ -32,7 +32,7 @@ public class ServerThread extends Thread {
                 }
                 System.out.println(inMessage);
                 packet = new DatagramPacket(buffer, buffer.length);
-                buffer=new byte[576];
+                buffer = new byte[576];
             }
         } catch (Exception e) {
             e.printStackTrace();
