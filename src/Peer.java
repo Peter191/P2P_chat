@@ -1,10 +1,8 @@
-import javax.json.Json;
 import java.io.*;
-import java.net.*;
 import java.util.ArrayList;
 
 public class Peer {
-    //    private String username;
+    private String username;
     ArrayList<PeerThread> peerThreads = new ArrayList<>();
     boolean listenMode = false;
     boolean listenModeAdmin = false;
@@ -35,6 +33,7 @@ public class Peer {
     }
 
     public void updatePeerListen(BufferedReader bufferedReader, String username, ServerThread serverThread) throws Exception {
+        this.username=username;
         String str;
         while (true) {
             System.out.println(StringCollection.MESSAGEENTERPEERINFORMATION.getText());
@@ -44,15 +43,13 @@ public class Peer {
                 String ipAddress = bufferedReader.readLine();
                 System.out.println(StringCollection.MESSAGEENTERPORTOFPEER.getText());
                 String portNr = bufferedReader.readLine();
-                Socket socket = null;
                 try {
-                    socket = new Socket(ipAddress, Integer.parseInt(portNr));
-                    PeerThread peerThread = new PeerThread(socket, this);
+                    PeerThread peerThread = new PeerThread(this);
                     peerThreads.add(peerThread);
                     peerThread.start();
+                    serverThread.addPeer(ipAddress, Integer.parseInt(portNr));
                 } catch (Exception e) {
-                    if (socket != null) socket.close();
-                    else System.out.println(StringCollection.ERRORINVALIDINPUT.getText());
+                    System.out.println(StringCollection.ERRORINVALIDINPUT.getText());
                 }
             } else if (str.equals(StringCollection.COMMANDSKIP.getText())) {
                 break;
@@ -64,51 +61,49 @@ public class Peer {
     private void communicate(BufferedReader bufferedReader, String username, ServerThread serverThread) {
         try {
             System.out.println(StringCollection.MESSAGEYOUCANCOMMUNICATE.getText());
-            label:
             while (true) {
                 String message = bufferedReader.readLine();
-                switch (message) {
-                    case "e":
-                        break label;
-                    case "c":
-                        updatePeerListen(bufferedReader, username, serverThread);
-                        break;
-                    case "stop":
-                        if (!listenMode) {
-                            StringWriter stringWriterStop = new StringWriter();
-                            createMsg(username, message, stringWriterStop);
-                            serverThread.sendMsg((stringWriterStop.toString()));
-                            stringWriterStop = new StringWriter();
-                            if (listenModeAdmin) {
-                                createMsg(StringCollection.FIELDSYSTEM.getText(), StringCollection.MESSAGELISTEMODEDEACTIVATED.getText() + username, stringWriterStop);
-                                listenModeAdmin = false;
-                            } else {
-                                createMsg(StringCollection.FIELDSYSTEM.getText(), StringCollection.MESSAGELISTEMODEACTIVATED.getText() + username, stringWriterStop);
-                                listenModeAdmin = true;
-                            }
-                            serverThread.sendMsg((stringWriterStop.toString()));
-                        }
-                        break;
-                    default:
-                        if (!listenMode) {
-                            StringWriter stringWriter = new StringWriter();
-                            createMsg(username, message, stringWriter);
-                            serverThread.sendMsg((stringWriter.toString()));
-                        }
-                        break;
+                if (message.equals(StringCollection.COMMANDCONTINUE.getText()))
+                    updatePeerListen(bufferedReader, username, serverThread);
+                else if (message.equals(StringCollection.COMMANDSTOP.getText())) {
+                    if (!listenMode) {
+                        stopProcedure(username, serverThread, message);
+                    } else
+                        System.out.println(StringCollection.MESSAGELISTENMODERESTRICTIONREMINDER.getText());
+                } else if (message.equals(StringCollection.COMMANDEXIT.getText())) {
+                    break;
+                } else {
+                    if (!listenMode) {
+                        sendMessage(username, serverThread, message);
+                    } else
+                        System.out.println(StringCollection.MESSAGELISTENMODERESTRICTIONREMINDER.getText());
                 }
             }
             System.exit(0);
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             e.printStackTrace();
         }
+
     }
 
-    private void createMsg(String username, String message, StringWriter stringWriter) {
-        Json.createWriter(stringWriter).writeObject(Json.createObjectBuilder()
-                .add(StringCollection.FIELDUSERNAME.getText(), username)
-                .add(StringCollection.FIELDMESSAGE.getText(), message)
-                .build());
+    private void stopProcedure(String username, ServerThread serverThread, String message) {
+        sendMessage(username, serverThread, message);
+        StringWriter stringWriterStop = new StringWriter();
+        if (listenModeAdmin) {
+            sendMessage(StringCollection.FIELDSYSTEM.getText(),serverThread,StringCollection.MESSAGELISTEMODEDEACTIVATED.getText() + username);
+            listenModeAdmin = false;
+        } else {
+            sendMessage(StringCollection.FIELDSYSTEM.getText(),serverThread,StringCollection.MESSAGELISTEMODEACTIVATED.getText() + username);
+            listenModeAdmin = true;
+        }
+        String jsonMessage = stringWriterStop.toString();
+        serverThread.sendMsg(jsonMessage);
+    }
+
+    private void sendMessage(String username, ServerThread serverThread, String message) {
+        message = username + " :" + message;
+        serverThread.sendMsg(message);
     }
 
     public boolean isListenMode() {
@@ -117,5 +112,13 @@ public class Peer {
 
     public void setListenMode(boolean listenMode) {
         this.listenMode = listenMode;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

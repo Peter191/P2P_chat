@@ -1,34 +1,39 @@
 import java.net.*;
 import java.io.*;
 
-import javax.json.*;
 
 
 public class PeerThread extends Thread {
-    BufferedReader bufferedReader;
     Peer peer;
+    DatagramSocket datagramSocket;
+    byte[] buffer = new byte[1460];
+    DatagramPacket packet;
     boolean listenMode = false;
+    String inMessage = "";
 
-    //    String username,ip_address;
-//    int port;
-    public PeerThread(Socket socket, Peer peer) throws IOException {
-        bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    public PeerThread(Peer peer) throws IOException {
         this.peer = peer;
+        this.datagramSocket = new DatagramSocket();
     }
 
     public void run() {
         boolean flag = true;
         while (flag) {
             try {
-                JsonObject jsonObject = Json.createReader(bufferedReader).readObject();
-                if (jsonObject.containsKey(StringCollection.FIELDUSERNAME.getText()))
-                    System.out.println("[" + jsonObject.getString(StringCollection.FIELDUSERNAME.getText()) + "]: " + jsonObject.getString((StringCollection.FIELDMESSAGE.getText())));
-                if (jsonObject.getString((StringCollection.FIELDMESSAGE.getText())).equals(StringCollection.COMMANDSTOP.getText()))
-                    changeListenMode();
+                packet = new DatagramPacket(buffer, buffer.length);
+                datagramSocket.receive(packet);
+                if (packet != null) {
+                    inMessage = new String(packet.getData(), 0, packet.getLength());
+                    String[] split = inMessage.split(":");
+                    String message = split[split.length - 1];
+                    if (message.equals(StringCollection.COMMANDSTOP.getText()))
+                        changeListenMode();
+                }
             } catch (Exception e) {
                 flag = false;
                 interrupt();
             }
+            buffer=new byte[1460];
         }
     }
 

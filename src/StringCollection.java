@@ -1,12 +1,4 @@
 public enum StringCollection {
-    TEST("string"),
-    PORT("9009"),
-    PORTPETER("9001"),
-    PETERIP("192.168.1.57"),
-    PORTMARKUS("9002"),
-    MARKUSIP("192.168.1.27"),
-    PORTALEXANDER("9003"),
-    ALEXANDERIP("????"),
     MESSAGEENTERUSERNAME("Enter your username:"),
     MESSAGEENTERPORT("Enter the port you want to use:"),
     MESSAGEENTERPORTOFPEER("Enter the port your peer is using:"),
@@ -15,13 +7,13 @@ public enum StringCollection {
     MESSAGEYOUCANCOMMUNICATE("you can communicate 'e' for exit, 'c' for change and 'stop' to make others listen"),
     MESSAGELISTEMODEACTIVATED("Listen mode activated by user:"),
     MESSAGELISTEMODEDEACTIVATED("Listen mode deactivated by user:"),
+    MESSAGELISTENMODERESTRICTIONREMINDER("You cannot send messages in listen mode"),
     ERRORINVALIDINPUT("Invalid input"),
-    FIELDUSERNAME("username"),
-    FIELDMESSAGE("message"),
     FIELDSYSTEM("SYSTEM"),
     COMMANDSTOP("stop"),
     COMMANDFAST("f"),
     COMMANDCONTINUE("c"),
+    COMMANDEXIT("e"),
     COMMANDSKIP("s");
 
     private final String label;
