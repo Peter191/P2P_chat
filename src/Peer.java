@@ -2,8 +2,6 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Peer {
-    private String username;
-//    ArrayList<PeerThread> peerThreads = new ArrayList<>();
     boolean listenMode = false;
     boolean listenModeAdmin = false;
 
@@ -33,7 +31,6 @@ public class Peer {
     }
 
     public void updatePeerListen(BufferedReader bufferedReader, String username, ServerThread serverThread) throws Exception {
-        this.username = username;
         serverThread.setPeer(this);
         String str;
         while (true) {
@@ -112,11 +109,4 @@ public class Peer {
         this.listenMode = listenMode;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 }
