@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Peer {
     private String username;
-    ArrayList<PeerThread> peerThreads = new ArrayList<>();
+//    ArrayList<PeerThread> peerThreads = new ArrayList<>();
     boolean listenMode = false;
     boolean listenModeAdmin = false;
 
@@ -33,7 +33,8 @@ public class Peer {
     }
 
     public void updatePeerListen(BufferedReader bufferedReader, String username, ServerThread serverThread) throws Exception {
-        this.username=username;
+        this.username = username;
+        serverThread.setPeer(this);
         String str;
         while (true) {
             System.out.println(StringCollection.MESSAGEENTERPEERINFORMATION.getText());
@@ -44,9 +45,6 @@ public class Peer {
                 System.out.println(StringCollection.MESSAGEENTERPORTOFPEER.getText());
                 String portNr = bufferedReader.readLine();
                 try {
-                    PeerThread peerThread = new PeerThread(this);
-                    peerThreads.add(peerThread);
-                    peerThread.start();
                     serverThread.addPeer(ipAddress, Integer.parseInt(portNr));
                 } catch (Exception e) {
                     System.out.println(StringCollection.ERRORINVALIDINPUT.getText());
@@ -91,10 +89,10 @@ public class Peer {
         sendMessage(username, serverThread, message);
         StringWriter stringWriterStop = new StringWriter();
         if (listenModeAdmin) {
-            sendMessage(StringCollection.FIELDSYSTEM.getText(),serverThread,StringCollection.MESSAGELISTEMODEDEACTIVATED.getText() + username);
+            sendMessage(StringCollection.FIELDSYSTEM.getText(), serverThread, StringCollection.MESSAGELISTEMODEDEACTIVATED.getText() + username);
             listenModeAdmin = false;
         } else {
-            sendMessage(StringCollection.FIELDSYSTEM.getText(),serverThread,StringCollection.MESSAGELISTEMODEACTIVATED.getText() + username);
+            sendMessage(StringCollection.FIELDSYSTEM.getText(), serverThread, StringCollection.MESSAGELISTEMODEACTIVATED.getText() + username);
             listenModeAdmin = true;
         }
         String jsonMessage = stringWriterStop.toString();

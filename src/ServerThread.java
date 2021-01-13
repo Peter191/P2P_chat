@@ -7,9 +7,11 @@ public class ServerThread extends Thread {
     private DatagramPacket packet;
     private ArrayList<InetAddress> inetAddresses = new ArrayList<>();
     private ArrayList<Integer> rep_ports = new ArrayList<>();
-    byte[] buffer = new byte[1460];
+    byte[] buffer = new byte[576 ];
     String outMessage;
     String inMessage;
+    private Peer peer;
+    boolean listenMode = false;
 
 
     public ServerThread(String portNr) throws IOException {
@@ -22,10 +24,16 @@ public class ServerThread extends Thread {
             while (true) {
                 datagramSocket.receive(packet);
                 inMessage = new String(packet.getData(), 0, packet.getLength());
-
+                if (packet != null) {
+                    inMessage = new String(packet.getData(), 0, packet.getLength());
+                    String[] split = inMessage.split(":");
+                    String message = split[split.length - 1];
+                    if (message.equals(StringCollection.COMMANDSTOP.getText()))
+                        changeListenMode();
+                }
                 System.out.println(inMessage);
                 packet = new DatagramPacket(buffer, buffer.length);
-                buffer=new byte[1460];
+                buffer=new byte[576];
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,5 +57,31 @@ public class ServerThread extends Thread {
         InetAddress intAddress = InetAddress.getByName(address);
         inetAddresses.add(intAddress);
         rep_ports.add(port);
+    }
+
+    public boolean isListenMode() {
+        return listenMode;
+    }
+
+    public void setListenMode(boolean listenMode) {
+        this.listenMode = listenMode;
+    }
+
+    public Peer getPeer() {
+        return peer;
+    }
+
+    public void setPeer(Peer peer) {
+        this.peer = peer;
+    }
+
+    private void changeListenMode() {
+        if (isListenMode() && getPeer().isListenMode()) {
+            getPeer().setListenMode(false);
+            setListenMode(false);
+        } else if (!isListenMode() && !getPeer().isListenMode()) {
+            getPeer().setListenMode(true);
+            setListenMode(true);
+        }
     }
 }
