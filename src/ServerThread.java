@@ -5,10 +5,9 @@ import java.util.ArrayList;
 public class ServerThread extends Thread {
     private final DatagramSocket datagramSocket;
     private DatagramPacket packet;
-    private ArrayList<InetAddress> inetAddresses = new ArrayList<>();
-    private ArrayList<Integer> rep_ports = new ArrayList<>();
+    private final ArrayList<InetAddress> inetAddresses = new ArrayList<>();
+    private final ArrayList<Integer> rep_ports = new ArrayList<>();
     byte[] buffer = new byte[576 ];
-    String outMessage;
     String inMessage;
     private Peer peer;
     boolean listenMode = false;
